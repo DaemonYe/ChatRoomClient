@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import cn.daemon.chatroomclient.view.ClientWindow;
+import cn.daemon.chatroomclient.view.ChatWindow;
 import cn.daemon.chatroomclient.view.LoginWindow;
 
 /**
@@ -37,14 +37,14 @@ public class ClientManager {
 		return loginWindow;
 	}
 
-	ClientWindow clientWindow;
+	ChatWindow chatWindow;
 
-	public void setClientWindow(ClientWindow clientWindow) {
-		this.clientWindow = clientWindow;
+	public void setChatWindow(ChatWindow chatWindow) {
+		this.chatWindow = chatWindow;
 	}
 
-	public ClientWindow getClientWindow() {
-		return clientWindow;
+	public ChatWindow getChatWindow() {
+		return chatWindow;
 	}
 
 	Socket socket;
@@ -71,9 +71,9 @@ public class ClientManager {
 					if (code != null && code.equals("OK")) {
 						JOptionPane.showMessageDialog(null, username
 								+ "ª∂”≠µ«¬ºDaemon¡ƒÃÏ “£°£°£°");
-						ClientWindow clientWindow = new ClientWindow();
-						clientWindow.setVisible(true);
-						setClientWindow(clientWindow);
+						ChatWindow chatWindow = new ChatWindow(username);
+						chatWindow.setVisible(true);
+						setChatWindow(chatWindow);
 						clientManager.getLoginWindow().dispose();
 						chatSocket.start();
 					} else {

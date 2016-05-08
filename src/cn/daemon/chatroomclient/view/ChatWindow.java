@@ -10,16 +10,18 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import cn.daemon.chatroomclient.controller.ClientManager;
 
-public class ClientWindow extends JFrame {
+public class ChatWindow extends JFrame {
 
 	/**
 	 * 
@@ -38,8 +40,11 @@ public class ClientWindow extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @param username
 	 */
-	public ClientWindow() {
+	public ChatWindow(String title) {
+		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 545, 353);
 		contentPane = new JPanel();
@@ -48,30 +53,6 @@ public class ClientWindow extends JFrame {
 
 		// UserList
 		model = new DefaultListModel();
-		list = new JList(model);
-		list.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				String newSelected = (String) list.getSelectedValue();
-				if (selectedList != null && selectedList.contains(newSelected))
-					selectedList.remove(newSelected);
-				else
-					selectedList.add(newSelected);
-				sendMessage.setText("");
-				for (String selected : selectedList) {
-					sendMessage.append("@" + selected);
-				}
-				if (selectedList.size() >= 1)
-					sendMessage.append(":");
-			}
-		});
-		// JScrollPane scrollPane = new JScrollPane(list);
-
-		// AllMsg
-		textArea = new JTextArea();
-
-		// sendMsg
-		sendMessage = new JTextArea();
 
 		// Ë½ÁÄ£¿
 		isPrivateChat = new JCheckBox("\u79C1\u804A");
@@ -110,6 +91,12 @@ public class ClientWindow extends JFrame {
 				selectedList.clear();
 			}
 		});
+
+		JScrollPane userListPane = new JScrollPane();
+
+		JScrollPane messagePane = new JScrollPane();
+
+		JScrollPane sendPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane
 				.setHorizontalGroup(gl_contentPane
@@ -117,60 +104,110 @@ public class ClientWindow extends JFrame {
 						.addGroup(
 								gl_contentPane
 										.createSequentialGroup()
-										.addComponent(list,
-												GroupLayout.DEFAULT_SIZE, 144,
+										.addComponent(userListPane,
+												GroupLayout.DEFAULT_SIZE, 118,
 												Short.MAX_VALUE)
-										.addGap(18)
+										.addGap(6)
 										.addGroup(
 												gl_contentPane
 														.createParallelGroup(
 																Alignment.LEADING)
 														.addComponent(
-																textArea,
+																sendPane,
 																GroupLayout.DEFAULT_SIZE,
-																340,
+																385,
+																Short.MAX_VALUE)
+														.addComponent(
+																messagePane,
+																Alignment.TRAILING,
+																GroupLayout.DEFAULT_SIZE,
+																385,
 																Short.MAX_VALUE)
 														.addGroup(
+																Alignment.TRAILING,
 																gl_contentPane
 																		.createSequentialGroup()
 																		.addComponent(
 																				isPrivateChat)
 																		.addPreferredGap(
 																				ComponentPlacement.RELATED,
-																				215,
+																				260,
 																				Short.MAX_VALUE)
 																		.addComponent(
 																				button,
 																				GroupLayout.PREFERRED_SIZE,
 																				76,
-																				GroupLayout.PREFERRED_SIZE))
-														.addComponent(
-																sendMessage,
-																GroupLayout.DEFAULT_SIZE,
-																340,
-																Short.MAX_VALUE))
+																				GroupLayout.PREFERRED_SIZE)))
 										.addContainerGap()));
-		gl_contentPane.setVerticalGroup(gl_contentPane
-				.createParallelGroup(Alignment.TRAILING)
-				.addGroup(
-						gl_contentPane
-								.createSequentialGroup()
-								.addComponent(textArea,
-										GroupLayout.DEFAULT_SIZE, 204,
-										Short.MAX_VALUE)
-								.addGap(18)
-								.addComponent(sendMessage,
-										GroupLayout.DEFAULT_SIZE, 84,
-										Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(
-										gl_contentPane
-												.createParallelGroup(
-														Alignment.BASELINE)
-												.addComponent(isPrivateChat)
-												.addComponent(button)))
-				.addComponent(list, GroupLayout.DEFAULT_SIZE, 335,
-						Short.MAX_VALUE));
+		gl_contentPane
+				.setVerticalGroup(gl_contentPane
+						.createParallelGroup(Alignment.LEADING)
+						.addGroup(
+								gl_contentPane
+										.createSequentialGroup()
+										.addGroup(
+												gl_contentPane
+														.createParallelGroup(
+																Alignment.BASELINE)
+														.addGroup(
+																gl_contentPane
+																		.createSequentialGroup()
+																		.addComponent(
+																				messagePane,
+																				GroupLayout.DEFAULT_SIZE,
+																				184,
+																				Short.MAX_VALUE)
+																		.addGap(8)
+																		.addComponent(
+																				sendPane,
+																				GroupLayout.PREFERRED_SIZE,
+																				85,
+																				GroupLayout.PREFERRED_SIZE)
+																		.addGap(4)
+																		.addGroup(
+																				gl_contentPane
+																						.createParallelGroup(
+																								Alignment.BASELINE)
+																						.addComponent(
+																								button)
+																						.addComponent(
+																								isPrivateChat)))
+														.addComponent(
+																userListPane,
+																GroupLayout.DEFAULT_SIZE,
+																304,
+																Short.MAX_VALUE))
+										.addGap(1)));
+
+		// sendMsg
+		sendMessage = new JTextArea();
+		sendPane.setViewportView(sendMessage);
+		// JScrollPane scrollPane = new JScrollPane(list);
+
+		// AllMsg
+		textArea = new JTextArea();
+		messagePane.setViewportView(textArea);
+		list = new JList(model);
+		userListPane.setViewportView(list);
+
+		JLabel userLabel = new JLabel("\u5728\u7EBF\u7528\u6237");
+		userListPane.setColumnHeaderView(userLabel);
+		list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				String newSelected = (String) list.getSelectedValue();
+				if (selectedList != null && selectedList.contains(newSelected))
+					selectedList.remove(newSelected);
+				else
+					selectedList.add(newSelected);
+				sendMessage.setText("");
+				for (String selected : selectedList) {
+					sendMessage.append("@" + selected);
+				}
+				if (selectedList.size() >= 1)
+					sendMessage.append(":");
+			}
+		});
 		contentPane.setLayout(gl_contentPane);
 	}
 

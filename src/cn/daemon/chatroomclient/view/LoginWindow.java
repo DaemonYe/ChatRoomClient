@@ -32,6 +32,7 @@ public class LoginWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginWindow() {
+		setTitle("µÇÂ¼");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 287, 168);
 		contentPane = new JPanel();

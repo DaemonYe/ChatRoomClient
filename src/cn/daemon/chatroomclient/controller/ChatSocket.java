@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import cn.daemon.chatroomclient.view.ClientWindow;
+import cn.daemon.chatroomclient.view.ChatWindow;
 
 public class ChatSocket extends Thread {
 
@@ -15,7 +15,7 @@ public class ChatSocket extends Thread {
 	String username;
 
 	ClientManager clientManager = ClientManager.getClientManager();
-	ClientWindow clientWindow;
+	ChatWindow chatWindow;
 
 	public ChatSocket(Socket s, String username) {
 		this.socket = s;
@@ -31,7 +31,7 @@ public class ChatSocket extends Thread {
 
 	@Override
 	public void run() {
-		ClientWindow clientWindow = clientManager.getClientWindow();
+		ChatWindow chatWindow = clientManager.getChatWindow();
 		try {
 			writer = new PrintWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
@@ -42,22 +42,22 @@ public class ChatSocket extends Thread {
 				if (line.startsWith("#UserList#")) {
 					String[] userList = line.split("####");
 					userList[0] = username;
-					clientWindow.initialList(userList);
+					chatWindow.initialList(userList);
 					continue;
 				}
 				if (line.startsWith("#AddUser#")) {
 					String[] userList = line.split("####");
 					String newUser = userList[1];
-					clientWindow.addUserToList(newUser);
+					chatWindow.addUserToList(newUser);
 					continue;
 				}
 				if (line.startsWith("#DeleteUser#")) {
 					String[] userList = line.split("####");
 					String newUser = userList[1];
-					clientWindow.deleteUserFromList(newUser);
+					chatWindow.deleteUserFromList(newUser);
 					continue;
 				}
-				clientWindow.appendMessage(line);
+				chatWindow.appendMessage(line);
 			}
 			writer.close();
 			reader.close();
@@ -104,7 +104,7 @@ public class ChatSocket extends Thread {
 			writer.flush();
 		} else {
 			System.out.println("连接中断");
-			clientWindow.appendMessage("当前的链接已经中断");
+			chatWindow.appendMessage("当前的链接已经中断");
 		}
 	}
 
